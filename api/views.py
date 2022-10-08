@@ -1,3 +1,4 @@
+from ast import Delete
 from .models import Item
 from .serializers import ItemSerializer
 from rest_framework import status, generics
@@ -33,3 +34,15 @@ class Items(APIView):
             item.save()
 
             return Response(ItemSerializer(item).data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, format=None):
+        item_id = request.query_params.get('id')
+        if item_id is not None:
+            item = Item.objects.filter(id=item_id)
+            if len(item):
+                item.delete()
+                return Response({'msg': 'Item deleted'}, status=status.HTTP_200_OK)
+
+            return Response({'msg': 'Item is not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

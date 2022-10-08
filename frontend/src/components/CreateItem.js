@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Grid, Button, Typography, TextField } from "@mui/material";
 
 const CreateItem = () => {
@@ -6,6 +7,8 @@ const CreateItem = () => {
   let [price, setPrice] = useState(0);
   let [type, setType] = useState("");
   let [brand, setBrand] = useState("");
+
+  let navigate = useNavigate();
 
   let CreateItemButton = async () => {
     let response = await fetch("/api/items", {
@@ -19,7 +22,7 @@ const CreateItem = () => {
       }),
     });
     let data = await response.json();
-    console.log(data);
+    navigate("/");
   };
 
   return (
@@ -51,6 +54,11 @@ const CreateItem = () => {
       <Grid item xs={12}>
         <Button color="primary" variant="contained" onClick={CreateItemButton}>
           Create Item
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <Button color="secondary" variant="contained" component={Link} to="/">
+          Back
         </Button>
       </Grid>
     </Grid>

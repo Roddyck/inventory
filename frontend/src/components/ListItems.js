@@ -10,10 +10,13 @@ import {
   TableContainer,
   Paper,
   Typography,
+  Button,
 } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const ListItems = () => {
   let [items, setItems] = useState([]);
+  let navigate = useNavigate();
 
   useEffect(() => {
     getItems();
@@ -23,38 +26,67 @@ const ListItems = () => {
     let response = await fetch("/api/items");
     let data = await response.json();
     setItems(data);
-    console.log(data);
-    console.log(items);
+  };
+
+  let deleteItem = async (item) => {
+    let response = await fetch("/api/items" + "?id=" + item.id, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (response.ok) {
+      let idx = items.indexOf(item);
+      items.splice(idx, 1);
+      setItems(items);
+    }
+    navigate("/");
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Type</TableCell>
-            <TableCell align="right">Brand</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {items.map((item) => (
-            <TableRow
-              key={item.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {item.name}
-              </TableCell>
-              <TableCell align="right">{item.price}</TableCell>
-              <TableCell align="right">{item.type}</TableCell>
-              <TableCell align="right">{item.brand}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Grid container spacing={1} align="center">
+      <Grid item xs={12}>
+        <Typography component="h4" variant="h4">
+          List of Items
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align="center">Price</TableCell>
+                <TableCell align="center">Type</TableCell>
+                <TableCell align="center">Brand</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell align="center">{item.price}</TableCell>
+                  <TableCell align="center">{item.type}</TableCell>
+                  <TableCell align="center">{item.brand}</TableCell>
+                  <TableCell align="center" padding="checkbox">
+                    <ClearIcon onClick={() => deleteItem(item)} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/create"
+        >
+          Add Item
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 
