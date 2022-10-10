@@ -1,68 +1,78 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Grid, Button, Typography, TextField } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Grid, TextField, Button } from "@mui/material";
 
-const CreateItem = () => {
+const SearchBar = (props) => {
   let [name, setName] = useState("");
   let [price, setPrice] = useState(0);
   let [type, setType] = useState("");
   let [brand, setBrand] = useState("");
 
-  let navigate = useNavigate();
-
-  let CreateItemButton = async () => {
-    let response = await fetch("/api/items", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name,
-        price: price,
-        type: type,
-        brand: brand,
-      }),
+  const searchButton = () => {
+    props.updateSearchParams({
+      name: name,
+      price: price,
+      type: type,
+      brand: brand,
     });
-    navigate("/");
+  };
+
+  const clearButtonPressed = () => {
+    props.clearFilters();
+    window.location.href = "/";
   };
 
   return (
     <Grid container spacing={1} align="center">
       <Grid item xs={12}>
         <TextField
+          size="small"
           placeholder="Name"
+          helperText="Name"
           onChange={(e) => setName(e.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
         <TextField
+          size="small"
           type="number"
           placeholder="Price"
+          helperText="Price"
           onChange={(e) => setPrice(e.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
         <TextField
+          size="small"
           placeholder="Type"
+          helperText="Type"
           onChange={(e) => setType(e.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
         <TextField
+          size="small"
           placeholder="Brand"
+          helperText="Brand"
           onChange={(e) => setBrand(e.target.value)}
         />
       </Grid>
       <Grid item xs={12}>
-        <Button color="primary" variant="contained" onClick={CreateItemButton}>
-          Create Item
+        <Button variant="contained" color="secondary" onClick={searchButton}>
+          Search
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Button color="secondary" variant="contained" component={Link} to="/">
-          Back
+        <Button
+          variant="contained"
+          color="success"
+          onClick={clearButtonPressed}
+        >
+          Clear
         </Button>
       </Grid>
     </Grid>
   );
 };
 
-export default CreateItem;
+export default SearchBar;
